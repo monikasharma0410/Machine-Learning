@@ -1,0 +1,102 @@
+from sklearn.datasets import make_regression
+import numpy as np
+import matplotlib.pyplot as plt
+
+X,y=make_regression(n_samples=4, n_features=1, n_informative=1, n_targets=1, noise=80, random_state=13)
+plt.scatter(X,y)
+
+#apply ordinary Least square (OLS) 
+from sklearn.linear_model import LinearRegression
+reg=LinearRegression()
+reg.fit(X,y)
+
+# coefficient/slope is m
+reg.coef_
+
+#intercept is b
+reg.intercept_
+
+plt.scatter(X,y)
+plt.plot(X,reg.predict(X),color='red')
+
+#lets apply gradient descent assuming slope is constant m=78.35
+# lets assume b intercept is 0
+# we have to reach b=26.15
+y_pred=((78.35*X)+0)
+
+plt.scatter(X,y)
+plt.plot(X,reg.predict(X),color='blue',label='OLS')
+plt.plot(X,y_pred,color='red',label='b+0')
+plt.legend()
+plt.show()
+
+m=78.35 
+b=0
+loss_slope= -2*np.sum(y-m*X.ravel()-b)
+loss_slope
+
+#lets take learning rate=0.1
+lr=0.1
+step_size=loss_slope*lr
+step_size
+
+#calculating the new intercept
+b=b-step_size
+b
+
+y_pred1=((78.35*X)+b).reshape(4)
+plt.scatter(X,y)
+plt.plot(X,reg.predict(X),color='green',label='OLS')
+plt.plot(X,y_pred1,color='red',label='b={}'.format(b))
+plt.plot(X,y_pred,color='blue',label='b=0')
+plt.legend()
+plt.show()
+
+#iteration 2
+loss_slope=-2*np.sum(y-m*X.ravel()-b)
+loss_slope
+
+#new b
+b=b-0.1*loss_slope
+b
+
+y_pred2=((78.35*X)+b).reshape(4)
+plt.scatter(X,y)
+plt.plot(X,reg.predict(X),color='red',label='OLS')
+plt.plot(X,y_pred2,color='green',label='b={}'.format(b))
+plt.plot(X,y_pred1,color='blue',label='b={}'.format(b))
+plt.plot(X,y_pred,color='black',label='b=0')
+plt.legend()
+plt.show()
+
+#Iteration 3
+m=78.35
+loss_slope=-2*np.sum(y-m*X.ravel()-b)
+loss_slope
+
+#new b at 3rd iteration
+b=b-0.1*loss_slope
+b
+
+#new y_pred
+y_pred3=((78.35*X)+b).reshape(4)
+
+plt.scatter(X,y)
+plt.plot(X,reg.predict(X),color='red',label='OLS')
+plt.plot(X,y_pred3,color='green',label='b={}'.format(b))
+plt.plot(X,y_pred2,color='blue',label='b={}'.format(b))
+plt.plot(X,y_pred,color='black',label='b=0')
+plt.legend()
+plt.show()
+
+b=-100
+m=78.35
+lr=0.01
+epochs=10
+
+for i in range(epochs):
+    loss_slope=-2*np.sum(y-m*X.ravel()-b)
+    b=b-lr*loss_slope
+    y_pred=m*X+b
+    plt.plot(X,y_pred)
+plt.scatter(X,y)
